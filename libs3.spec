@@ -1,11 +1,11 @@
 Summary: C Library and Tools for Amazon S3 Access
 Name: libs3
-Version: trunk
+Version: 2.0
 Release: 1
 License: GPL
-Group: Networking/Utilities
-URL: http://sourceforge.net/projects/reallibs3
-Source0: libs3-trunk.tar.gz
+Group: Applications/Internet
+URL: http://libs3.ischo.com.s3.amazonaws.com/index.html
+Source0: libs3-2.0.tar.gz
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
 # Want to include curl dependencies, but older Fedora Core uses curl-devel,
 # and newer Fedora Core uses libcurl-devel ... have to figure out how to
@@ -15,8 +15,10 @@ Buildrequires: libxml2-devel
 Buildrequires: openssl-devel
 Buildrequires: make
 # Requires: libcurl
-Requires: libxml2
+#Requires: libxml2
 Requires: openssl
+# Can't seem to install the rpm without below line? Not sure why.
+Provides: libs3.so.2()(64bit)
 
 %define debug_package %{nil}
 
@@ -65,16 +67,21 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-/usr/bin/s3
-/usr/lib/libs3.so*
+%{_bindir}/s3
+%{_libdir}/libs3.so.*
 
 %files devel
 %defattr(-,root,root,-)
-/usr/include/libs3.h
-/usr/lib/libs3.a
+%{_includedir}/libs3.h
+%{_libdir}/libs3.a
+%{_libdir}/libs3.so
+
+%post -p /sbin/ldconfig
+
+%postun -p /sbin/ldconfig
 
 %changelog
-* Sat Aug 09 2008  <bryan@ischo,com> Bryan Ischo
+* Sat Aug 09 2008  <bryan@ischo,com> Bryan Ischo - 2.0-1
 - Split into regular and devel packages.
 
 * Tue Aug 05 2008  <bryan@ischo,com> Bryan Ischo

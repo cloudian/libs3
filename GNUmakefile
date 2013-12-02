@@ -88,6 +88,10 @@ ifndef DESTDIR
     DESTDIR := /usr
 endif
 
+libdir.x86_64 = lib64
+libdir.i686   = lib
+MACHINE := $(shell uname -m)
+libdir = $(libdir.$(MACHINE))
 
 # --------------------------------------------------------------------------
 # Acquire configuration information for libraries that libs3 depends upon
@@ -157,19 +161,19 @@ install: exported
 	$(VERBOSE_SHOW) install -Dps -m u+rwx,go+rx $(BUILD)/bin/s3 \
                     $(DESTDIR)/bin/s3
 	$(QUIET_ECHO) \
-        $(DESTDIR)/lib/libs3.so.$(LIBS3_VER): Installing shared library
+        $(DESTDIR)/$(libdir)/libs3.so.$(LIBS3_VER): Installing shared library
 	$(VERBOSE_SHOW) install -Dps -m u+rw,go+r \
-               $(BUILD)/lib/libs3.so.$(LIBS3_VER_MAJOR) \
-               $(DESTDIR)/lib/libs3.so.$(LIBS3_VER)
+               $(BUILD)/$(libdir)/libs3.so.$(LIBS3_VER_MAJOR) \
+               $(DESTDIR)/$(libdir)/libs3.so.$(LIBS3_VER)
 	$(QUIET_ECHO) \
-        $(DESTDIR)/lib/libs3.so.$(LIBS3_VER_MAJOR): Linking shared library
+        $(DESTDIR)/$(libdir)/libs3.so.$(LIBS3_VER_MAJOR): Linking shared library
 	$(VERBOSE_SHOW) ln -sf libs3.so.$(LIBS3_VER) \
-               $(DESTDIR)/lib/libs3.so.$(LIBS3_VER_MAJOR)
-	$(QUIET_ECHO) $(DESTDIR)/lib/libs3.so: Linking shared library
-	$(VERBOSE_SHOW) ln -sf libs3.so.$(LIBS3_VER_MAJOR) $(DESTDIR)/lib/libs3.so
-	$(QUIET_ECHO) $(DESTDIR)/lib/libs3.a: Installing static library
-	$(VERBOSE_SHOW) install -Dp -m u+rw,go+r $(BUILD)/lib/libs3.a \
-                    $(DESTDIR)/lib/libs3.a
+               $(DESTDIR)/$(libdir)/libs3.so.$(LIBS3_VER_MAJOR)
+	$(QUIET_ECHO) $(DESTDIR)/$(libdir)/libs3.so: Linking shared library
+	$(VERBOSE_SHOW) ln -sf libs3.so.$(LIBS3_VER_MAJOR) $(DESTDIR)/$(libdir)/libs3.so
+	$(QUIET_ECHO) $(DESTDIR)/$(libdir)/libs3.a: Installing static library
+	$(VERBOSE_SHOW) install -Dp -m u+rw,go+r $(BUILD)/$(libdir)/libs3.a \
+                    $(DESTDIR)/$(libdir)/libs3.a
 	$(QUIET_ECHO) $(DESTDIR)/include/libs3.h: Installing header
 	$(VERBOSE_SHOW) install -Dp -m u+rw,go+r $(BUILD)/include/libs3.h \
                     $(DESTDIR)/include/libs3.h
@@ -184,10 +188,10 @@ uninstall:
 	$(VERBOSE_SHOW) \
 	    rm -f $(DESTDIR)/bin/s3 \
               $(DESTDIR)/include/libs3.h \
-              $(DESTDIR)/lib/libs3.a \
-              $(DESTDIR)/lib/libs3.so \
-              $(DESTDIR)/lib/libs3.so.$(LIBS3_VER_MAJOR) \
-              $(DESTDIR)/lib/libs3.so.$(LIBS3_VER)
+              $(DESTDIR)/$(libdir)/libs3.a \
+              $(DESTDIR)/$(libdir)/libs3.so \
+              $(DESTDIR)/$(libdir)/libs3.so.$(LIBS3_VER_MAJOR) \
+              $(DESTDIR)/$(libdir)/libs3.so.$(LIBS3_VER)
 
 
 # --------------------------------------------------------------------------
@@ -213,8 +217,8 @@ $(BUILD)/obj/%.do: src/%.c
 # --------------------------------------------------------------------------
 # libs3 library targets
 
-LIBS3_SHARED = $(BUILD)/lib/libs3.so.$(LIBS3_VER_MAJOR)
-LIBS3_STATIC = $(BUILD)/lib/libs3.a
+LIBS3_SHARED = $(BUILD)/$(libdir)/libs3.so.$(LIBS3_VER_MAJOR)
+LIBS3_STATIC = $(BUILD)/$(libdir)/libs3.a
 
 .PHONY: libs3
 libs3: $(LIBS3_SHARED) $(LIBS3_STATIC)
