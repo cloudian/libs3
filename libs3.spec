@@ -75,6 +75,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/libs3.h
 %{_libdir}/libs3.a
 %{_libdir}/libs3.so
+%{_libdir}/pkgconfig/libs3.pc
 
 %post -p /sbin/ldconfig
 

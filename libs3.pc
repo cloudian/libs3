@@ -1,0 +1,12 @@
+relocatableprefix=
+prefix=${relocatableprefix}/usr
+exec_prefix=${prefix}
+includedir=${prefix}/include
+libdir=${exec_prefix}/lib64
+
+Name: libs3
+Description: C Library and Tools for Amazon S3 Access
+Version: 2.0
+
+Cflags: -I${includedir}
+Libs: -L${libdir} -ls3

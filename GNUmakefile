@@ -149,7 +149,7 @@ all: exported test
 # Exported targets are the library and driver program
 
 .PHONY: exported
-exported: libs3 s3 headers
+exported: libs3 s3 headers pkgconfig
 
 
 # --------------------------------------------------------------------------
@@ -177,7 +177,10 @@ install: exported
 	$(QUIET_ECHO) $(DESTDIR)/include/libs3.h: Installing header
 	$(VERBOSE_SHOW) install -Dp -m u+rw,go+r $(BUILD)/include/libs3.h \
                     $(DESTDIR)/include/libs3.h
-
+	$(QUIET_ECHO) $(DESTDIR)/$(libdir)/pkgconfig/libs3.pc: Installing pkgconfig
+	$(VERBOSE_SHOW) install -Dp -m u+rw,go+r \
+                    $(BUILD)/$(libdir)/pkgconfig/libs3.pc \
+                    $(DESTDIR)/$(libdir)/pkgconfig/libs3.pc
 
 # --------------------------------------------------------------------------
 # Uninstall target
@@ -188,6 +191,7 @@ uninstall:
 	$(VERBOSE_SHOW) \
 	    rm -f $(DESTDIR)/bin/s3 \
               $(DESTDIR)/include/libs3.h \
+              $(DESTDIR)/$(libdir)/pkgconfig/libs3.pc \
               $(DESTDIR)/$(libdir)/libs3.a \
               $(DESTDIR)/$(libdir)/libs3.so \
               $(DESTDIR)/$(libdir)/libs3.so.$(LIBS3_VER_MAJOR) \
@@ -263,6 +267,13 @@ $(BUILD)/include/libs3.h: inc/libs3.h
 	@ mkdir -p $(dir $@)
 	$(VERBOSE_SHOW) ln -sf $(abspath $<) $@
 
+.PHONY: pkgconfig
+headers: $(BUILD)/$(libdir)/pkgconfig/libs3.pc
+
+$(BUILD)/$(libdir)/pkgconfig/libs3.pc: libs3.pc
+	$(QUIET_ECHO) $@: Building pkgconfig
+	@ mkdir -p $(dir $@)
+	$(VERBOSE_SHOW) cp libs3.pc $@
 
 # --------------------------------------------------------------------------
 # Test targets
